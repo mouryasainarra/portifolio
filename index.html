@@ -23,7 +23,7 @@
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;overflow-x:hidden;width:100%}
 body{
   font-family:'Outfit',sans-serif;
   background:var(--bg);
@@ -332,10 +332,12 @@ nav{
     background:#0d0d0f;
     flex-direction:column;justify-content:center;align-items:flex-start;
     gap:26px;padding:0 38px;
-    transform:translateX(100%);transition:transform .38s var(--ease);
-    z-index:1000;box-shadow:-24px 0 70px rgba(0,0,0,.5);
+    transform:translateX(100%);
+    transition:transform .38s var(--ease), visibility .38s;
+    visibility:hidden;
+    z-index:1000;
   }
-  .nav-links.open{transform:translateX(0)}
+  .nav-links.open{transform:translateX(0);visibility:visible;box-shadow:-24px 0 70px rgba(0,0,0,.5)}
   .nav-links a{
     color:#fff;font-size:1.05rem;letter-spacing:2px;width:100%;
     padding:6px 0;border-bottom:1px solid rgba(255,255,255,.08);
@@ -369,6 +371,9 @@ nav{
   .review-grid{grid-template-columns:repeat(2,1fr)}
   .work-grid{grid-template-columns:1fr}
   .form-row{grid-template-columns:1fr}
+  .edu-item{grid-template-columns:1fr;gap:6px;padding:24px 22px}
+  .edu-when{padding-top:0}
+  .edu-body h3{font-size:1.15rem}
 }
 @media(min-width:901px){ .nav-close{display:none} }
 @media(max-width:520px){
