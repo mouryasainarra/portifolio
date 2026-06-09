@@ -43,13 +43,17 @@ nav{
   position:fixed;top:0;left:0;right:0;z-index:100;
   display:flex;align-items:center;justify-content:space-between;
   padding:18px 5vw;
-  backdrop-filter:blur(12px);
-  background:color-mix(in srgb, var(--bg) 70%, transparent);
+  background:var(--bg);
   border-bottom:1px solid color-mix(in srgb,var(--ink) 8%, transparent);
   transition:background .4s var(--ease);
 }
-.logo{font-family:'Archivo',sans-serif;font-weight:900;font-size:1.25rem;letter-spacing:-.5px}
+.logo{font-family:'Archivo',sans-serif;font-weight:900;font-size:1.25rem;letter-spacing:-.5px;display:inline-flex;align-items:center;color:var(--ink)}
 .logo span{color:var(--accent)}
+.logo-glyph{height:.95em;width:auto;margin-left:6px}
+.logo-glyph .net{fill:none;stroke:var(--accent);stroke-width:1.8;opacity:.85}
+.logo-glyph .line{fill:none;stroke:var(--accent);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+.logo-glyph .pt{fill:var(--accent)}
+.logo-glyph .tip{fill:var(--ink)}
 .nav-links{display:flex;gap:30px;align-items:center}
 .nav-links a{
   font-weight:600;font-size:.82rem;letter-spacing:1.5px;text-transform:uppercase;
@@ -323,12 +327,41 @@ nav{
    ============================================================ */
 @media(max-width:900px){
   .nav-links{
-    position:fixed;inset:0 0 0 auto;width:72%;max-width:320px;background:var(--bg);
-    flex-direction:column;justify-content:center;gap:36px;transform:translateX(100%);transition:transform .4s var(--ease);
-    box-shadow:-20px 0 60px rgba(0,0,0,.1);
+    position:fixed;top:0;right:0;bottom:0;left:auto;
+    width:80%;max-width:330px;height:100%;
+    background:#0d0d0f;
+    flex-direction:column;justify-content:center;align-items:flex-start;
+    gap:26px;padding:0 38px;
+    transform:translateX(100%);transition:transform .38s var(--ease);
+    z-index:1000;box-shadow:-24px 0 70px rgba(0,0,0,.5);
   }
-  .nav-links.open{transform:none}
-  .burger{display:flex}
+  .nav-links.open{transform:translateX(0)}
+  .nav-links a{
+    color:#fff;font-size:1.05rem;letter-spacing:2px;width:100%;
+    padding:6px 0;border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .nav-links a:hover{color:var(--accent)}
+  .nav-links a::after{display:none}
+  .nav-links a.feedback-btn{
+    background:var(--accent);color:var(--accent-ink);text-align:center;
+    border:none;margin-top:10px;padding:14px 0;border-radius:40px;font-size:.85rem;
+  }
+  .nav-close{
+    display:block;position:absolute;top:22px;right:24px;
+    width:34px;height:34px;cursor:pointer;background:none;border:none;
+  }
+  .nav-close::before,.nav-close::after{
+    content:"";position:absolute;top:50%;left:50%;width:24px;height:2.5px;background:#fff;border-radius:3px;
+  }
+  .nav-close::before{transform:translate(-50%,-50%) rotate(45deg)}
+  .nav-close::after{transform:translate(-50%,-50%) rotate(-45deg)}
+  .nav-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.55);
+    opacity:0;visibility:hidden;transition:opacity .35s;z-index:999;
+  }
+  .nav-overlay.open{opacity:1;visibility:visible}
+  .burger{display:flex;z-index:1001}
+  body.menu-open{overflow:hidden}
   .about{grid-template-columns:1fr;text-align:center}
   .about p{margin-inline:auto}
   .socials{justify-content:center}
@@ -337,17 +370,25 @@ nav{
   .work-grid{grid-template-columns:1fr}
   .form-row{grid-template-columns:1fr}
 }
+@media(min-width:901px){ .nav-close{display:none} }
 @media(max-width:520px){
   .review-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
+<script>
+  /* Always open at the top, even if the shared link ends in #section */
+  if('scrollRestoration' in history) history.scrollRestoration='manual';
+  if(location.hash){ history.replaceState(null,'',location.pathname+location.search); }
+  window.addEventListener('load',function(){ window.scrollTo(0,0); });
+</script>
 
 <!-- ========== NAV ========== -->
 <nav>
-  <div class="logo">Mourya<span>.dev</span></div>
+  <a class="logo" href="#hero">Mourya<span>.</span><svg class="logo-glyph" viewBox="0 0 56 32"><g class="net"><line x1="9" y1="6" x2="28" y2="16"/><line x1="9" y1="16" x2="28" y2="16"/><line x1="9" y1="26" x2="28" y2="16"/><line x1="9" y1="6" x2="28" y2="6"/><line x1="9" y1="26" x2="28" y2="26"/><line x1="28" y1="6" x2="47" y2="16"/><line x1="28" y1="16" x2="47" y2="16"/><line x1="28" y1="26" x2="47" y2="16"/></g><circle class="pt" cx="9" cy="6" r="3.4"/><circle class="pt" cx="9" cy="16" r="3.4"/><circle class="pt" cx="9" cy="26" r="3.4"/><circle class="pt" cx="28" cy="6" r="3.4"/><circle class="tip" cx="28" cy="16" r="3.8"/><circle class="pt" cx="28" cy="26" r="3.4"/><circle class="pt" cx="47" cy="16" r="3.8"/></svg></a>
   <div class="nav-links" id="navLinks">
+    <button class="nav-close" id="navClose" aria-label="Close menu"></button>
     <a href="#hero">Home</a>
     <a href="#about">About</a>
     <a href="#skills">Skills</a>
@@ -359,6 +400,7 @@ nav{
   </div>
   <div class="burger" id="burger"><span></span><span></span><span></span></div>
 </nav>
+<div class="nav-overlay" id="navOverlay"></div>
 
 <!-- ========== HERO ========== -->
 <header class="hero" id="hero">
@@ -560,8 +602,14 @@ mq.innerHTML=mqHTML;
 /* ---------- MOBILE MENU ---------- */
 const burger=document.getElementById('burger');
 const navLinks=document.getElementById('navLinks');
-burger.onclick=()=>navLinks.classList.toggle('open');
-navLinks.querySelectorAll('a').forEach(a=>a.onclick=()=>navLinks.classList.remove('open'));
+const navOverlay=document.getElementById('navOverlay');
+const navClose=document.getElementById('navClose');
+function openMenu(){ navLinks.classList.add('open'); navOverlay.classList.add('open'); document.body.classList.add('menu-open'); }
+function closeMenu(){ navLinks.classList.remove('open'); navOverlay.classList.remove('open'); document.body.classList.remove('menu-open'); }
+burger.onclick=openMenu;
+if(navClose) navClose.onclick=closeMenu;
+if(navOverlay) navOverlay.onclick=closeMenu;
+navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));
 
 /* ---------- YEAR ---------- */
 document.getElementById('yr').textContent=new Date().getFullYear();
